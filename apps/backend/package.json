@@ -1,0 +1,38 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "AI-powered customer support backend",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc",
+    "db:push": "prisma db push",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ai-sdk/google": "^3.0.24",
+    "@ai-sdk/openai": "^3.0.26",
+    "@hono/node-server": "^1.19.9",
+    "@prisma/client": "^5.22.0",
+    "@types/node-fetch": "^2.6.13",
+    "ai": "^6.0.79",
+    "dotenv": "^16.0.3",
+    "hono": "^4.6.14",
+    "hono-rate-limiter": "^0.5.3",
+    "node-fetch": "^2.7.0",
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.25.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.11",
+    "prisma": "^5.22.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
