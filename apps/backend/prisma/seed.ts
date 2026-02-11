@@ -1,9 +1,8 @@
 import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 
-// Ensure DATABASE_URL is set
 if (!process.env.DATABASE_URL) {
-  console.error("❌ DATABASE_URL is not set in .env file");
+  console.error("DATABASE_URL is not set in .env file");
   process.exit(1);
 }
 
@@ -12,7 +11,7 @@ console.log("DATABASE_URL is:", process.env.DATABASE_URL ? "SET" : "NOT SET");
 const prisma = new PrismaClient({});
 
 async function main() {
-  console.log("🌱 Starting database seed...");
+  console.log("Starting database seed...");
 
   // Clear existing data
   await prisma.message.deleteMany();
@@ -106,7 +105,7 @@ async function main() {
     }),
   ]);
 
-  console.log(`✅ Created ${refunds.length} refunds`);
+  console.log(`Created ${refunds.length} refunds`);
 
   // Seed sample conversation
   const conversation = await prisma.conversation.create({
@@ -128,14 +127,14 @@ async function main() {
     },
   });
 
-  console.log(`✅ Created sample conversation with ${conversation.id}`);
+  console.log(`Created sample conversation with ${conversation.id}`);
 
-  console.log("🎉 Database seed completed!");
+  console.log("Database seed completed!");
 }
 
 main()
   .catch((e) => {
-    console.error("❌ Seed failed:", e);
+    console.error("Seed failed:", e);
     process.exit(1);
   })
   .finally(async () => {

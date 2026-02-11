@@ -9,8 +9,7 @@ export const routerAgent = async (
 ) => {
   let intent = "support";
   
-  try {
-    // Use AI to classify the intent
+  try{
     const { text } = await runTogetherAgent({
       system: `You are a router agent for a customer support system. Analyze this user message and determine which specialized agent should handle it.
       
@@ -22,31 +21,28 @@ export const routerAgent = async (
       - billing: For payment issues, refunds, invoices, subscription queries
       
       Respond with ONLY the agent name (support, order, or billing). Do not add any other text.`,
-      prompt: message, // Redundant but safe with our logic
+      prompt: message,
     });
     
-    // Safely handle potential undefined text
     if (text) {
         intent = text.trim().toLowerCase();
-        // Remove punctuation
         intent = intent.replace(/[^a-z]/g, "");
     }
     
     console.log(`[Router Agent] Classification: ${intent}`);
-  } catch (error) {
+  } 
+  catch(error){
     console.error("[Router Agent] Classification failed, defaulting to support:", error);
     intent = "support";
   }
   
-  // Route to appropriate agent based on AI classification
-  if (intent.includes("order")) {
+  if(intent.includes("order")){
     return orderAgent(message, conversationId);
   }
   
-  if (intent.includes("billing")) {
+  if(intent.includes("billing")){
     return billingAgent(message, conversationId);
   }
   
-  // Default to support agent
   return supportAgent(message, conversationId);
 };

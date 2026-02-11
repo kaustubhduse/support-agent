@@ -1,10 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import request from "supertest";
 
-// Note: This test file demonstrates the integration test structure
-// In a real scenario, you'd import your Hono app and test actual endpoints
-// For now, this serves as a template
-
 describe("Chat API Integration Tests", () => {
   const baseURL = "http://localhost:3000";
 
@@ -18,7 +14,6 @@ describe("Chat API Integration Tests", () => {
         })
         .expect("Content-Type", /json/);
 
-      // Should return 200 or 201
       expect([200, 201]).toContain(response.status);
       
       if (response.status === 200 || response.status === 201) {
@@ -28,7 +23,6 @@ describe("Chat API Integration Tests", () => {
     });
 
     it("should handle rate limiting", async () => {
-      // Send multiple requests rapidly
       const requests = Array(70).fill(null).map(() =>
         request(baseURL)
           .post("/api/chat/messages")
@@ -41,7 +35,6 @@ describe("Chat API Integration Tests", () => {
       const responses = await Promise.all(requests);
       const rateLimited = responses.some((r) => r.status === 429);
 
-      // At least one should be rate limited
       expect(rateLimited).toBe(true);
     });
 
@@ -50,7 +43,6 @@ describe("Chat API Integration Tests", () => {
         .post("/api/chat/messages")
         .send({
           conversationId: "test-conv",
-          // Missing message field
         });
 
       expect(response.status).toBe(400);

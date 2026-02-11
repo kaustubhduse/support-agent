@@ -3,13 +3,10 @@ import { z } from "zod";
 import { fetchOrder } from "../tools/order.tool";
 
 export const orderAgent = async (message: string, conversationId: string) => {
-  try {
+  try{
     const { text } = await runTogetherAgent({
       system: `You are an order management specialist. Help customers with order status, tracking information, modifications, and cancellations. Be clear and informative about order details.`,
-      prompt: message, // Or messages if we want history? Router passes just message. 
-      // Ideally we should fetch history here too? 
-      // The router architecture implies stateless agents or agents that fetch their own context.
-      // The original code used `prompt: message`. So we stick to that for now.
+      prompt: message,
       tools: {
         fetchOrder: {
           description: "Fetch order details by order ID",
@@ -25,7 +22,8 @@ export const orderAgent = async (message: string, conversationId: string) => {
     });
 
     return text;
-  } catch (error) {
+  } 
+  catch(error){
     console.error("[Order Agent] Error:", error);
     return "I'm currently running in offline mode due to API limits. I can't look up live orders right now, but normally I would help you with that!";
   }

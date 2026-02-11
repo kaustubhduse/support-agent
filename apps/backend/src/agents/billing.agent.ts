@@ -2,11 +2,11 @@ import { runTogetherAgent } from "../lib/together_simple";
 import { z } from "zod";
 import { fetchInvoice, checkRefundStatus } from "../tools/billing.tool";
 
-export const billingAgent = async (
+export const billingAgent = async(
   message: string,
   conversationId: string
 ) => {
-  try {
+  try{
     const { text } = await runTogetherAgent({
       system: `You are a billing and payment specialist. Help customers with invoices, payment issues, refunds, and subscription queries. Be professional and clear about financial matters.`,
       prompt: message,
@@ -35,7 +35,8 @@ export const billingAgent = async (
     });
 
     return text;
-  } catch (error) {
+  } 
+  catch(error){
     console.error("[Billing Agent] Error:", error);
     return "I'm currently running in offline mode due to API limits. I can't check invoice details right now, but normally I would help you with that!";
   }
