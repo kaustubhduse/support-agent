@@ -5,11 +5,9 @@ import { prisma } from "../db";
 
 export const chatController = new Hono();
 
-// Send a message and get AI response (streaming)
 chatController.post("/messages", async (c) => {
   const { conversationId, message } = await c.req.json();
   
-  // Save user message and get AI response
   const reply = await sendMessage(conversationId, message);
   
   return c.json({ reply });

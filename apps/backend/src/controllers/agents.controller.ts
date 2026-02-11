@@ -2,7 +2,6 @@ import { Hono } from "hono";
 
 export const agentsController = new Hono();
 
-// Get list of available agents
 agentsController.get("/", async (c) => {
   const agents = [
     {
