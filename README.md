@@ -1,159 +1,206 @@
 # AI Customer Support System
 
-Full-stack AI-powered customer support with multi-agent architecture.
-
-## Features
-
-- 🤖 **Multi-Agent System**: Router agent intelligently delegates to specialized sub-agents (Support, Order, Billing)
-- 💬 **Conversational AI**: Maintains context across messages using Vercel AI SDK
-- 🛠️ **Tool Calling**: Agents can fetch real data from database (orders, invoices)
-- 🎨 **Modern UI**: Beautiful gradient interface with real-time typing indicators
-- 📦 **Full-Stack TypeScript**: Type-safe from database to UI
-
-## Tech Stack
-
-**Frontend**: React, Vite, Tailwind CSS  
-**Backend**: Hono.js, Vercel AI SDK  **Database**: PostgreSQL, Prisma ORM  
-**AI**: OpenAI GPT-4o-mini
-
-## Prerequisites
-
-- Node.js 18+
-- PostgreSQL database
-- OpenAI API key
-
-## Setup Instructions
-
-### 1. Clone & Install
-
-```bash
-git clone <your-repo>
-cd ai-support-system
-
-# Install backend dependencies
-cd apps/backend
-npm install
-
-# Install frontend dependencies
-cd ../../frontend
-npm install
-```
-
-### 2. Environment Variables
-
-Create `apps/backend/.env`:
-
-```env
-DATABASE_URL="postgresql://user:password@host:5432/dbname?sslmode=require"
-OPENAI_API_KEY=sk-proj-...your-key-here
-PORT=3000
-```
-
-### 3. Database Setup
-
-```bash
-cd apps/backend
-
-# Push schema to database
-npm run db:push
-
-# Seed with sample data
-npm run db:seed
-```
-
-### 4. Run the Application
-
-**Terminal 1 - Backend:**
-```bash
-cd apps/backend
-npm run dev
-# Server runs on http://localhost:3000
-```
-
-**Terminal 2 - Frontend:**
-```bash
-cd frontend
-npm run dev
-# UI runs on http://localhost:5173
-```
-
-## API Endpoints
-
-### Chat
-- `POST /api/chat/messages` - Send a message
-- `GET /api/chat/conversations` - List all conversations
-- `GET /api/chat/conversations/:id` - Get conversation history
-- `DELETE /api/chat/conversations/:id` - Delete conversation
-
-### Agents
-- `GET /api/agents` - List available agents
-- `GET /api/agents/:type/capabilities` - Get agent capabilities
-
-### Health
-- `GET /api/health` - Health check
+A fullstack AI-powered customer support system with multi-agent architecture, featuring intelligent routing, database-backed tools, and conversational context management.
 
 ## Architecture
 
 ### Multi-Agent System
+- **Router Agent**: Analyzes incoming queries and delegates to specialized sub-agents
+- **Support Agent**: Handles general inquiries, FAQs, and troubleshooting with conversation history
+- **Order Agent**: Manages order status, tracking, and delivery queries
+- **Billing Agent**: Handles invoices, payments, and refund status checks
 
-1. **Router Agent**: Analyzes intent and routes to specialist
-2. **Support Agent**: General inquiries with conversation context
-3. **Order Agent**: Order status, tracking (uses `fetchOrder` tool)
-4. **Billing Agent**: Invoices, payments (uses `fetchInvoice` tool)
+### Controller-Service Pattern
+Clean separation of concerns with dedicated controllers, services, and middleware for error handling and rate limiting.
 
-### Sample Data
+## Tech Stack
 
-The seed script creates:
-- 3 orders (ORD123, ORD124, ORD125)
-- 3 invoices (INV123, INV124, INV125)
-- 1 sample conversation
+**Backend**
+- Hono.dev (Web framework)
+- Prisma ORM
+- PostgreSQL (Neon)
+- Together AI (Custom runner implementation)
+- TypeScript
 
-Try asking:
-- "What's the status of order ORD123?"
-- "Show me invoice INV124"
-- "I need help with my account"
+**Frontend**
+- React + Vite
+- TailwindCSS
+- TypeScript
+
+## Features
+
+### Core Requirements
+- Multi-agent routing with intelligent classification
+- Database-backed tools (fetchOrder, fetchInvoice, checkRefundStatus, getHistory)
+- Conversational context across messages
+- RESTful API with streaming support
+- Message and conversation persistence
+- Real-time typing indicators
+
+### Bonus Features
+- Rate limiting (60 requests/minute)
+- Context management with token truncation
+- Unit tests (Vitest)
+- Integration tests (Supertest)
+- ChatGPT-style UI with conversation sidebar
+- Deployment documentation
+
+## Setup
+
+### Prerequisites
+- Node.js 18+
+- PostgreSQL database (Neon recommended)
+- Together AI API key
+
+### Environment Variables
+
+Create `.env` in `apps/backend`:
+
+```env
+DATABASE_URL="postgresql://..."
+TOGETHER_API_KEY="your-together-ai-key"
+PORT=3000
+```
+
+### Installation
+
+```bash
+# Install dependencies
+npm install
+
+# Generate Prisma client
+cd apps/backend
+npx prisma generate
+
+# Push schema to database
+npx prisma db push
+
+# Seed database with sample data
+npm run db:seed
+
+# Start backend
+npm run dev
+
+# Start frontend (in new terminal)
+cd ../../frontend
+npm run dev
+```
+
+## API Routes
+
+```
+/api/chat
+  POST   /messages              # Send new message
+  GET    /conversations         # List all conversations
+  POST   /conversations         # Create new conversation
+  GET    /conversations/:id     # Get conversation messages
+  DELETE /conversations/:id     # Delete conversation
+
+/api/agents
+  GET    /agents                # List available agents
+  GET    /agents/:type/capabilities  # Get agent capabilities
+
+/api/health                     # Health check
+```
+
+## Database Schema
+
+**Conversation** - Stores chat sessions  
+**Message** - User and AI messages  
+**Order** - Sample order data (id, status, tracking)  
+**Invoice** - Invoice records (id, amount, status)  
+**Refund** - Refund tracking (invoiceId, amount, status, reason)
+
+## Testing
+
+### Unit Tests
+```bash
+cd apps/backend
+npm test
+```
+
+### Integration Tests
+```bash
+npm run test:run
+```
+
+### Demo Test Script
+
+Use these queries to test all features:
+
+**Multi-Agent Routing:**
+1. "Hi, I need help" → Support Agent
+2. "Where is my order ORD123?" → Order Agent (uses fetchOrder tool)
+3. "Show me invoice INV124" → Billing Agent (uses fetchInvoice tool)
+
+**Tool Usage & Database:**
+4. "What's the status of order ORD124?" → Fetches real data (Processing, TRK888777)
+5. "Check refund status for invoice INV125" → Uses checkRefundStatus ($599.99, Approved)
+6. "Tell me about invoice INV123" → Shows invoice details
+
+**Conversational Context:**
+7. "What was the first thing I asked?" → Support agent references conversation history
+8. "And the second question?" → Shows context awareness
+
+**UI Features:**
+- Click "+ New Chat" to create new conversation
+- Switch between conversations in sidebar
+- Toggle sidebar visibility
+- Delete conversations
+
+## Seeded Test Data
+
+**Orders:**
+- ORD123: Shipped, TRK999888
+- ORD124: Processing, TRK888777
+- ORD125: Delivered, TRK777666
+
+**Invoices:**
+- INV123: $499.99, Paid
+- INV124: $299.99, Pending
+- INV125: $599.99, Overdue
+
+**Refunds:**
+- REF123: INV123, $499.99, Completed
+- REF124: INV124, $299.99, Pending
+- REF125: INV125, $599.99, Approved
 
 ## Project Structure
 
 ```
 ai-support-system/
-├── apps/backend/
-│   ├── src/
-│   │   ├── agents/          # AI agents
-│   │   ├── controllers/     # API routes
-│   │   ├── services/        # Business logic
-│   │   ├── tools/           # Agent tools
-│   │   └── middleware/      # Error handling
-│   └── prisma/
-│       └── schema.prisma    # Database schema
+├── apps/
+│   └── backend/
+│       ├── prisma/           # Database schema and migrations
+│       ├── src/
+│       │   ├── agents/       # AI agents (router, support, order, billing)
+│       │   ├── controllers/  # Route handlers
+│       │   ├── services/     # Business logic
+│       │   ├── tools/        # Agent tools (database queries)
+│       │   ├── lib/          # Together AI integration
+│       │   ├── utils/        # Context management utilities
+│       │   └── middleware/   # Error handling, rate limiting
+│       └── __tests__/        # Integration tests
 └── frontend/
     └── src/
-        ├── Chat.tsx         # Main chat UI
-        └── api.ts           # API client
+        ├── App.tsx           # Main app with sidebar
+        ├── Chat.tsx          # Chat interface
+        └── api.ts            # API client
+
 ```
 
-## Development
+## Deployment
 
-- Backend uses `tsx watch` for hot reload
-- Frontend uses Vite HMR
-- TypeScript for type safety
-- Prisma for database migrations
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions for Vercel and Railway.
 
-## Notes
+## Implementation Notes
 
-- TypeScript lint errors in agents are false positives from AI SDK version mismatches - the code works correctly
-- Make sure to add your OPENAI_API_KEY before running
-- Database must be accessible from your development environment
+- Custom Together AI runner built to replace failing Vercel AI SDK integration
+- Context truncation maintains last 6000 tokens to prevent API errors
+- Rate limiting prevents API abuse (60 RPM per IP)
+- All conversations and messages persist in PostgreSQL
+- Tools query actual database records via Prisma
 
-## Bonus Features Implemented
+## License
 
-- ✅ Clean architecture (Controller-Service-Repository pattern)
-- ✅ Comprehensive error handling
-- ✅ Modern, beautiful UI
-- ✅ Real-time AI typing indicator
-- ✅ Conversation persistence
-- ✅ Multi-agent routing with AI classification
-
----
-
-Built for fullstack engineering assessment.
+MIT

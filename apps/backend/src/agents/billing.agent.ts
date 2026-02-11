@@ -1,6 +1,6 @@
 import { runTogetherAgent } from "../lib/together_simple";
 import { z } from "zod";
-import { fetchInvoice } from "../tools/billing.tool";
+import { fetchInvoice, checkRefundStatus } from "../tools/billing.tool";
 
 export const billingAgent = async (
   message: string,
@@ -19,6 +19,16 @@ export const billingAgent = async (
           execute: async ({ invoiceId }: any) => {
             const invoice = await fetchInvoice(invoiceId);
             return invoice || { error: "Invoice not found" };
+          },
+        },
+        checkRefundStatus: {
+          description: "Check refund status for an invoice by invoice ID",
+          parameters: z.object({
+            invoiceId: z.string().describe("The invoice ID to check refund status for"),
+          }),
+          execute: async ({ invoiceId }: any) => {
+            const refund = await checkRefundStatus(invoiceId);
+            return refund || { message: "No refund found for this invoice" };
           },
         },
       },

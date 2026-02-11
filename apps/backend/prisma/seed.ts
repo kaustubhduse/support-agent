@@ -2,7 +2,10 @@ import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 
 // Ensure DATABASE_URL is set
-process.env.DATABASE_URL = process.env.DATABASE_URL || "postgresql://neondb_owner:npg_Xj3DluAoR5LY@ep-muddy-mode-aic3p512-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
+if (!process.env.DATABASE_URL) {
+  console.error("❌ DATABASE_URL is not set in .env file");
+  process.exit(1);
+}
 
 console.log("DATABASE_URL is:", process.env.DATABASE_URL ? "SET" : "NOT SET");
 
@@ -70,6 +73,40 @@ async function main() {
   ]);
 
   console.log(`✅ Created ${invoices.length} invoices`);
+
+  // Seed Refunds
+  const refunds = await Promise.all([
+    prisma.refund.create({
+      data: {
+        id: "REF123",
+        invoiceId: "INV123",
+        amount: 499.99,
+        status: "completed",
+        reason: "Product defect",
+        processedAt: new Date("2024-01-20"),
+      },
+    }),
+    prisma.refund.create({
+      data: {
+        id: "REF124",
+        invoiceId: "INV124",
+        amount: 299.99,
+        status: "pending",
+        reason: "Customer request",
+      },
+    }),
+    prisma.refund.create({
+      data: {
+        id: "REF125",
+        invoiceId: "INV125",
+        amount: 599.99,
+        status: "approved",
+        reason: "Billing error",
+      },
+    }),
+  ]);
+
+  console.log(`✅ Created ${refunds.length} refunds`);
 
   // Seed sample conversation
   const conversation = await prisma.conversation.create({

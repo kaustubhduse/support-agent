@@ -105,24 +105,24 @@ export default function Chat({ conversationId, onNewConversation }: ChatProps) {
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Header */}
-      <div className="bg-slate-800/50 backdrop-blur-sm border-b border-purple-500/20 px-6 py-4">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-white">AI Support Chat</h1>
-            <p className="text-purple-300 text-sm">Ask anything about orders, billing, or support</p>
+      <div className="bg-slate-800/50 backdrop-blur-sm border-b border-purple-500/20 px-3 md:px-6 py-3 md:py-4">
+        <div className="flex justify-between items-center gap-2">
+          <div className="min-w-0">
+            <h1 className="text-lg md:text-2xl font-bold text-white truncate">AI Support Chat</h1>
+            <p className="text-purple-300 text-xs md:text-sm hidden sm:block">Ask anything about orders, billing, or support</p>
           </div>
           <button
             onClick={onNewConversation}
-            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all transform hover:scale-105"
+            className="px-3 md:px-4 py-1.5 md:py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
           >
             New Chat
           </button>
         </div>
       </div>
 
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
-        {messages.length === 0 && (
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto px-3 md:px-6 py-4 md:py-6 space-y-3 md:space-y-4">
+        {messages.length === 0 ? (
           <div className="text-center text-purple-300 mt-20">
             <h2 className="text-3xl font-bold mb-4">👋 Welcome!</h2>
             <p className="text-lg">How can I help you today?</p>
@@ -144,32 +144,32 @@ export default function Chat({ conversationId, onNewConversation }: ChatProps) {
               </div>
             </div>
           </div>
-        )}
-
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`flex ${
-              msg.role === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
+        ) : (
+          messages.map((msg) => (
             <div
-              className={`max-w-[70%] rounded-2xl px-4 py-3 ${
-                msg.role === "user"
-                  ? "bg-purple-600 text-white"
-                  : "bg-slate-800 text-white border border-purple-500/20"
+              key={msg.id}
+              className={`flex ${
+                msg.role === "user" ? "justify-end" : "justify-start"
               }`}
             >
-              <p className="whitespace-pre-wrap">{msg.content}</p>
-              <span className="text-xs opacity-60 mt-1 block">
-                {new Date(msg.createdAt).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </span>
+              <div
+                className={`max-w-[70%] rounded-2xl px-4 py-3 ${
+                  msg.role === "user"
+                    ? "bg-purple-600 text-white"
+                    : "bg-slate-800 text-white border border-purple-500/20"
+                }`}
+              >
+                <p className="whitespace-pre-wrap">{msg.content}</p>
+                <span className="text-xs opacity-60 mt-1 block">
+                  {new Date(msg.createdAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
 
         {isLoading && (
           <div className="flex justify-start">
@@ -190,24 +190,25 @@ export default function Chat({ conversationId, onNewConversation }: ChatProps) {
       </div>
 
       {/* Input Area */}
-      <div className="bg-slate-800/50 backdrop-blur-sm border-t border-purple-500/20 px-6 py-4">
-        <div className="flex items-end space-x-4">
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Type your message..."
-            className="flex-1 bg-slate-900 text-white border border-purple-500/30 rounded-xl px-4 py-3 resize-none focus:outline-none focus:border-purple-500 placeholder-purple-300/50"
-            rows={1}
-            disabled={isLoading}
-          />
-          <button
-            onClick={handleSend}
-            disabled={isLoading || !input.trim()}
-            className="px-6 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white rounded-xl transition-all transform hover:scale-105 disabled:transform-none"
-          >
-            Send
-          </button>
+      <div className="border-t border-purple-500/20 bg-slate-800/50 backdrop-blur-sm p-3 md:p-6">
+        <div className="max-w-4xl mx-auto">        <div className="flex items-end space-x-4">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyPress}
+              placeholder="Type your question..."
+              className="flex-1 bg-slate-900 text-white border border-purple-500/30 rounded-xl px-4 py-3 resize-none focus:outline-none focus:border-purple-500 placeholder-purple-300/50"
+              disabled={isLoading}
+            />
+            <button
+              onClick={handleSend}
+              disabled={isLoading || !input.trim()}
+              className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-4 md:px-6 py-2 md:py-3 rounded-lg transition-all transform hover:scale-105 disabled:hover:scale-100 text-sm md:text-base disabled:transform-none"
+            >
+              Send
+            </button>
+          </div>
         </div>
       </div>
     </div>

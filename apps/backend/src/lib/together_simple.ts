@@ -3,7 +3,7 @@ import { zodToJsonSchema } from "zod-to-json-schema";
 import { z } from "zod";
 
 const TOGETHER_API_URL = "https://api.together.xyz/v1/chat/completions";
-const MODEL_ID = "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"; // Or 8B if needed
+const MODEL_ID = "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo";
 
 interface AgentOptions {
   model?: string;

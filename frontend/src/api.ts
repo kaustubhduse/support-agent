@@ -16,24 +16,29 @@ export const sendMessage = async (
   return res.json();
 };
 
-export const getConversations = async () => {
+export async function getConversation(conversationId: string): Promise<any[]> {
+  const res = await fetch(`${API_BASE}/chat/conversations/${conversationId}`);
+  const data = await res.json();
+  // Backend returns array of messages directly, not wrapped in object
+  return Array.isArray(data) ? data : [];
+}
+
+export async function getConversations(): Promise<any[]> {
   const res = await fetch(`${API_BASE}/chat/conversations`);
-  return res.json();
-};
+  return await res.json();
+}
 
-export const getConversation = async (id: string) => {
-  const res = await fetch(`${API_BASE}/chat/conversations/${id}`);
-  return res.json();
-};
-
-export const deleteConversation = async (id: string) => {
-  const res = await fetch(`${API_BASE}/chat/conversations/${id}`, {
+export async function deleteConversation(conversationId: string): Promise<void> {
+  await fetch(`${API_BASE}/chat/conversations/${conversationId}`, {
     method: "DELETE",
   });
-  return res.json();
-};
+}
 
-export const createConversation = async () => {
-  // Generate a unique conversation ID
-  return `conv_${Date.now()}`;
-};
+export async function createConversation(): Promise<string> {
+  const res = await fetch(`${API_BASE}/chat/conversations`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  });
+  const conversation = await res.json();
+  return conversation.id;
+}

@@ -34,3 +34,13 @@ model Invoice {
   amount Float
   status String
 }
+
+model Refund {
+  id          String    @id
+  invoiceId   String
+  amount      Float
+  status      String   // "pending", "approved", "completed", "rejected"
+  reason      String?
+  createdAt   DateTime  @default(now())
+  processedAt DateTime?
+}

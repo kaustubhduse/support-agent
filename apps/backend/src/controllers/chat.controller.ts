@@ -15,10 +15,21 @@ chatController.post("/messages", async (c) => {
   return c.json({ reply });
 });
 
+// Create a new conversation
+chatController.post("/conversations", async (c) => {
+  const conversation = await prisma.conversation.create({
+    data: {},
+  });
+  return c.json(conversation);
+});
+
 // Get all conversations
 chatController.get("/conversations", async (c) => {
   const conversations = await prisma.conversation.findMany({
     include: {
+      _count: {
+        select: { messages: true },
+      },
       messages: {
         orderBy: { createdAt: "desc" },
         take: 1,
@@ -26,7 +37,16 @@ chatController.get("/conversations", async (c) => {
     },
     orderBy: { createdAt: "desc" },
   });
-  return c.json(conversations);
+  
+  // Transform to include messageCount
+  const formatted = conversations.map(conv => ({
+    id: conv.id,
+    createdAt: conv.createdAt,
+    messageCount: conv._count.messages,
+    lastMessage: conv.messages[0]?.content || null,
+  }));
+  
+  return c.json(formatted);
 });
 
 // Get conversation by ID

@@ -1,9 +1,5 @@
 import { routerAgent } from "../agents/router.agent";
 
-/**
- * Agent Service
- * Responsible for delegating messages to router agent
- */
 export const runAgent = async (
   message: string,
   conversationId: string
