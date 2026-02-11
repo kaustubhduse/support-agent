@@ -3,8 +3,8 @@
  * and preventing token limit errors
  */
 
-export const MAX_CONTEXT_TOKENS = 6000; // Leave ~2000 tokens for response
-export const TOKENS_PER_CHAR = 0.25; // Rough estimate: 1 token ≈ 4 chars
+export const MAX_CONTEXT_TOKENS = 6000; 
+export const TOKENS_PER_CHAR = 0.25; 
 
 interface Message {
   role: string;
@@ -28,18 +28,11 @@ export function calculateTotalTokens(messages: Message[]): number {
   }, 0);
 }
 
-/**
- * Truncate conversation history to fit within token limit
- * Preserves recent messages and system prompts
- * @param messages Full conversation history
- * @param maxTokens Maximum allowed tokens (default: MAX_CONTEXT_TOKENS)
- * @returns Truncated message array
- */
+
 export function truncateHistory(
   messages: Message[],
   maxTokens: number = MAX_CONTEXT_TOKENS
 ): Message[] {
-  // If already under limit, return as-is
   if (calculateTotalTokens(messages) <= maxTokens) {
     return messages;
   }
@@ -68,16 +61,14 @@ export function truncateHistory(
       break;
     }
 
-    truncated.splice(systemMessages.length, 0, msg); // Insert after system messages
+    truncated.splice(systemMessages.length, 0, msg);
     currentTokens += msgTokens;
   }
 
   return truncated;
 }
 
-/**
- * Get context window stats for debugging
- */
+
 export function getContextStats(messages: Message[]) {
   const totalTokens = calculateTotalTokens(messages);
   const utilization = (totalTokens / MAX_CONTEXT_TOKENS) * 100;

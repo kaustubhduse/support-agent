@@ -7,6 +7,6 @@ export const fetchInvoice = (id: string) => {
 export const checkRefundStatus = (invoiceId: string) => {
   return prisma.refund.findFirst({ 
     where: { invoiceId },
-    orderBy: { createdAt: 'desc' } // Get most recent refund
+    orderBy: { createdAt: 'desc' }
   });
 };

@@ -1,6 +1,5 @@
 import fetch from "node-fetch";
 import { zodToJsonSchema } from "zod-to-json-schema";
-import { z } from "zod";
 
 const TOGETHER_API_URL = "https://api.together.xyz/v1/chat/completions";
 const MODEL_ID = "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo";
@@ -21,21 +20,20 @@ export const runTogetherAgent = async (options: AgentOptions) => {
     { role: "system", content: options.system },
   ];
 
-  if (options.messages) {
-    // Map tool calls if they exist in history? 
-    // For now assuming history is clean or standard OA format.
+  if(options.messages){
     messages = [...messages, ...options.messages];
-  } else if (options.prompt) {
+  } 
+  else if(options.prompt){
     messages.push({ role: "user", content: options.prompt });
   }
 
   let toolsBody: any[] | undefined = undefined;
   let toolMap: Record<string, any> = {};
 
-  if (options.tools) {
+  if(options.tools){
     toolsBody = [];
     toolMap = options.tools;
-    for (const [name, tool] of Object.entries(options.tools)) {
+    for(const [name, tool] of Object.entries(options.tools)){
       toolsBody.push({
         type: "function",
         function: {
@@ -48,7 +46,7 @@ export const runTogetherAgent = async (options: AgentOptions) => {
   }
 
   let turnCount = 0;
-  const maxTurns = 5; // Safety
+  const maxTurns = 5;
 
   while (turnCount < maxTurns) {
     turnCount++;
@@ -61,7 +59,7 @@ export const runTogetherAgent = async (options: AgentOptions) => {
       max_tokens: 1024,
     };
 
-    if (toolsBody && toolsBody.length > 0) {
+    if(toolsBody && toolsBody.length > 0){
         body.tools = toolsBody;
         body.tool_choice = "auto";
     }
@@ -79,19 +77,20 @@ export const runTogetherAgent = async (options: AgentOptions) => {
                 body: JSON.stringify(body),
             });
 
-            if (response.status === 429) {
+            if(response.status === 429){
                 console.warn(`[Together] Rate limit hit. Retrying in ${(attempts + 1) * 1000}ms...`);
                 await new Promise(r => setTimeout(r, (attempts + 1) * 1000));
                 attempts++;
                 continue;
             }
 
-            if (!response.ok) {
+            if(!response.ok){
                 const errorText = await response.text();
                 throw new Error(`Together API Error: ${response.status} ${errorText}`);
             }
-            break; // Success
-        } catch (e: any) {
+            break;
+        } 
+        catch(e: any){
             if (attempts === 2 || !e.message.includes("429")) throw e;
             attempts++;
         }
@@ -103,7 +102,6 @@ export const runTogetherAgent = async (options: AgentOptions) => {
     const choice = data.choices[0];
     const message = choice.message;
 
-    // Add assistant message to history
     messages.push(message);
 
     if (message.tool_calls && message.tool_calls.length > 0) {
@@ -117,11 +115,12 @@ export const runTogetherAgent = async (options: AgentOptions) => {
             console.log(`[Together] Executing ${toolName} with`, toolArgs);
             
             const tool = toolMap[toolName];
-            if (tool) {
+            if(tool){
                 let result;
-                try {
+                try{
                    result = await tool.execute(toolArgs);
-                } catch (err: any) {
+                } 
+                catch(err: any){
                    result = { error: err.message };
                 }
                 
@@ -131,7 +130,8 @@ export const runTogetherAgent = async (options: AgentOptions) => {
                     content: JSON.stringify(result),
                     name: toolName 
                 } as any);
-            } else {
+            } 
+            else{
                  messages.push({
                     role: "tool",
                     tool_call_id: toolId,
@@ -140,9 +140,8 @@ export const runTogetherAgent = async (options: AgentOptions) => {
                 } as any);
             }
         }
-        // Loop keeps running to let model process tool results
-    } else {
-        // No tool calls, final response
+    } 
+    else{
         return { text: message.content || "" };
     }
   }

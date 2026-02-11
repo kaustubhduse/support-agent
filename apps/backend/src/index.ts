@@ -6,7 +6,7 @@ import { errorMiddleware } from "./middleware/error.middleware";
 
 const app = new Hono();
 
-app.use("*", cors({
+app.use("*",cors({
   origin: "http://localhost:5173",
   credentials: true,
 }));

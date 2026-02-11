@@ -14,16 +14,16 @@ describe("Context Utilities", () => {
     });
 
     it("should estimate tokens for short text", () => {
-      const text = "Hello, world!"; // 13 chars
+      const text = "Hello, world!"; 
       const tokens = estimateTokenCount(text);
       expect(tokens).toBeGreaterThan(0);
-      expect(tokens).toBeLessThan(text.length); // Should be less than char count
+      expect(tokens).toBeLessThan(text.length); 
     });
 
     it("should estimate tokens for long text", () => {
-      const text = "A".repeat(1000); // 1000 chars
+      const text = "A".repeat(1000);  
       const tokens = estimateTokenCount(text);
-      expect(tokens).toBeCloseTo(250, 10); // ~250 tokens (1000 / 4)
+      expect(tokens).toBeCloseTo(250, 10); 
     });
   });
 
@@ -56,13 +56,12 @@ describe("Context Utilities", () => {
     it("should preserve system messages", () => {
       const messages = [
         { role: "system", content: "You are helpful" },
-        { role: "user", content: "A".repeat(10000) }, // Force truncation
+        { role: "user", content: "A".repeat(10000) }, 
         { role: "assistant", content: "B".repeat(10000) },
         { role: "user", content: "Recent message" },
       ];
       const result = truncateHistory(messages, 1000);
       
-      // System message should always be present
       expect(result.some((m) => m.role === "system" && m.content.includes("helpful"))).toBe(true);
     });
 
@@ -74,7 +73,6 @@ describe("Context Utilities", () => {
       ];
       const result = truncateHistory(messages, 500);
       
-      // Should keep the most recent message
       expect(result.some((m) => m.content === "Recent")).toBe(true);
     });
 
@@ -87,7 +85,6 @@ describe("Context Utilities", () => {
       ];
       const result = truncateHistory(messages, 500);
       
-      // Should include truncation notice
       expect(
         result.some((m) => m.content.includes("truncated"))
       ).toBe(true);
@@ -111,11 +108,11 @@ describe("Context Utilities", () => {
 
     it("should calculate utilization percentage", () => {
       const messages = [
-        { role: "user", content: "A".repeat(24000) }, // ~6000 tokens
+        { role: "user", content: "A".repeat(24000) }, 
       ];
       const stats = getContextStats(messages);
       
-      expect(stats.utilizationPercent).toBeGreaterThan(90); // Should be near 100%
+      expect(stats.utilizationPercent).toBeGreaterThan(90); 
     });
   });
 });

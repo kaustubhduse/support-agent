@@ -11,7 +11,7 @@ export const sendMessage = async (
       throw new Error("Conversation ID is required");
     }
 
-    // 1. Save user message (and create conversation if needed)
+    // 1. Save user message
     await prisma.message.create({
       data: {
         role: "user",
@@ -38,7 +38,8 @@ export const sendMessage = async (
     });
 
     return reply;
-  } catch (error) {
+  }
+  catch(error){
     console.error("[Chat Service] Error processing message:", error);
     return "I'm sorry, I encountered an internal error. Please try again.";
   }

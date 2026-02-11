@@ -4,14 +4,15 @@ export const runAgent = async (
   message: string,
   conversationId: string
 ) => {
-  try {
+  try{
     console.log(`[Agent Service] Processing message for conversation ${conversationId}: ${message}`);
     const response = await routerAgent(message, conversationId);
     console.log(`[Agent Service] Agent response: ${response}`);
     return response;
-  } catch (error) {
+  } 
+  catch(error){
     console.error("[Agent Service] Error:", error);
-    if (error instanceof Error) {
+    if(error instanceof Error){
       console.error("[Agent Service] Stack:", error.stack);
     }
     return "Something went wrong while processing your request. Please try again later.";
