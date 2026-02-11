@@ -7,10 +7,10 @@ import { errorMiddleware } from "./middleware/error.middleware";
 const app = new Hono();
 
 app.use("*",cors({
-  origin: "http://localhost:5173",
+  origin: "*",
   credentials: true,
 }));
-
+    
 app.use("*", errorMiddleware);
 
 // Rate limiting (100 req/15min)
