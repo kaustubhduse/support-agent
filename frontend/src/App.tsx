@@ -14,7 +14,6 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isCreatingConversation, setIsCreatingConversation] = useState(false);
 
-  // Load conversations on mount
   useEffect(() => {
     loadConversations();
   }, []);
@@ -25,7 +24,6 @@ export default function App() {
   };
 
   const handleNewConversation = async () => {
-    // Prevent multiple simultaneous creations
     if (isCreatingConversation) return;
     
     setIsCreatingConversation(true);
@@ -36,11 +34,11 @@ export default function App() {
       // Switch to the new conversation
       setConversationId(newId);
       
-      // Refresh sidebar to show new conversation
       await loadConversations();
     } catch (error) {
       console.error("Failed to create conversation:", error);
-    } finally {
+    } 
+    finally {
       setIsCreatingConversation(false);
     }
   };
@@ -52,7 +50,6 @@ export default function App() {
   const handleDeleteConversation = async (id: string) => {
     await deleteConversation(id);
     await loadConversations();
-    // If deleted current conversation, create new one
     if (id === conversationId) {
       handleNewConversation();
     }
