@@ -57,11 +57,11 @@ export default function App() {
 
   return (
     <div className="flex h-screen bg-gray-900 overflow-hidden">
-      {/* Sidebar - Overlay on mobile, fixed on desktop */}
+      {/* Sidebar - Collapsible on all screen sizes */}
       <div
         className={`${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } fixed md:relative md:translate-x-0 z-30 w-64 h-full bg-gray-950 border-r border-gray-800 transition-transform duration-300 flex flex-col`}
+        } fixed md:relative z-30 w-64 h-full bg-gray-950 border-r border-gray-800 transition-transform duration-300 flex flex-col`}
       >
         {/* Sidebar Header */}
         <div className="p-4 border-b border-gray-800">
